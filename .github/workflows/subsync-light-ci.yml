@@ -1,0 +1,36 @@
+name: SubSync Studio CI
+
+on:
+  push:
+    branches:
+      - subsync-light-review-v0.5.0
+    paths:
+      - 'SubSync-Studio/**'
+      - '.github/workflows/subsync-light-ci.yml'
+  pull_request:
+    paths:
+      - 'SubSync-Studio/**'
+      - '.github/workflows/subsync-light-ci.yml'
+
+jobs:
+  core-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile Python sources
+        working-directory: SubSync-Studio
+        run: python -m py_compile app.py core/*.py
+      - name: Run core tests
+        working-directory: SubSync-Studio
+        run: python -m unittest discover -s tests -v
+      - name: Package Windows source bundle
+        run: zip -r SubSync-Studio-v0.5.0.zip SubSync-Studio -x '*/.venv/*' '*/__pycache__/*' '*.pyc'
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SubSync-Studio-v0.5.0
+          path: SubSync-Studio-v0.5.0.zip
+          if-no-files-found: error
