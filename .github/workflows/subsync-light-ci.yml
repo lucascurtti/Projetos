@@ -1,0 +1,28 @@
+name: SubSync Studio CI
+
+on:
+  push:
+    branches:
+      - subsync-light-review-v0.5.0
+    paths:
+      - 'SubSync-Studio/**'
+      - '.github/workflows/subsync-light-ci.yml'
+  pull_request:
+    paths:
+      - 'SubSync-Studio/**'
+
+jobs:
+  core-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SubSync-Studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile Python sources
+        run: python -m py_compile app.py core/*.py
+      - name: Run core tests
+        run: python -m unittest discover -s tests -v
