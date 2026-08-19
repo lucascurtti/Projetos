@@ -43,8 +43,8 @@ def sync_subtitle(
     if mode == "multi":
         cli += ["--multi-segment-sync", "--segment-count", "8", "--skip-intro-outro"]
     elif mode == "cuts":
-        # Deixa o algoritmo considerar divisões internas com penalidade menor.
-        cli += ["--split-penalty", "2.0"]
+        # Usa a penalidade padrão do próprio FFsubsync para alinhamento por partes.
+        cli += ["--split-penalty"]
 
     args = make_parser().parse_args(cli)
 
